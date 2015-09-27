@@ -18,24 +18,6 @@ public class MyArraysUtil { // без использования Arrays и ма�
         return resultArray;
     }
 
-    private int[] bubbleSort(int[] array) {
-
-        int[] arrayResult = cloneArray(array);
-
-        int temp;
-
-        for (int i = 1; i < arrayResult.length; i++) {
-            for (int j = arrayResult.length - 1; j >= i; j--)
-                if (arrayResult[j - 1] > arrayResult[j]) {
-                    temp = arrayResult[j - 1];
-                    arrayResult[j - 1] = arrayResult[j];
-                    arrayResult[j] = temp;
-                }
-        }
-
-        return arrayResult;
-    }
-
     private int[] dublicateKill(int[] array) {
 
         int count = 0;
@@ -66,40 +48,6 @@ public class MyArraysUtil { // без использования Arrays и ма�
         int[] newResult = new int[count];
 
         return cuttingArray(newResult, arrayResult);
-    }
-
-    private int[] dublicateKillWithOriginal(int[] array) {
-
-        int count = 0;
-        int[] arrayResult = new int[array.length];
-        int[] arrayTemp = cloneArray(array);
-        int pos = 0;
-        int n = 0;
-
-        for (int i = 0; i < arrayTemp.length; i++) {
-
-            //if (arrayTemp[i] == arrayTemp[i+1]) {
-
-                while (arrayTemp[pos] == arrayTemp[pos+1]) {
-                    pos++;
-                    n++;
-                }
-                i = pos + n;
-
-            //}
-
-            arrayResult[count] = arrayTemp[i];
-            count++;
-
-        }
-
-
-
-
-
-        int[] newArrayResult = new int[count];
-
-        return cuttingArray(newArrayResult, arrayResult);
     }
 
     public int[] leftUnion(int[] leftArray, int[] rightArray){
@@ -188,20 +136,40 @@ public class MyArraysUtil { // без использования Arrays и ма�
 
     public int[] outerUnion(int[] leftArray, int[] rightArray){ // Вывод разных отличающихся элементов
 
+        int[] leftArrayNoDublicate = dublicateKill(leftArray);
+        int[] rightArrayNoDublicate = dublicateKill(rightArray);
+
         int count = 0;
-        int[] arrayTemp = new int[leftArray.length + rightArray.length];
+        int[] arrayTemp = new int[leftArrayNoDublicate.length + rightArrayNoDublicate.length];
 
-        for (int i = 0; i < leftArray.length; i++) {
-            arrayTemp[i] = leftArray[i];
+        for (int i = 0; i < leftArrayNoDublicate.length; i++) {
+            for (int j = 0; j < rightArrayNoDublicate.length; j++) {
+                if (leftArrayNoDublicate[i] == rightArrayNoDublicate[j]) {
+                    break;
+                } else {
+                    if ((leftArrayNoDublicate[i] != rightArrayNoDublicate[j]) && (j == (rightArrayNoDublicate.length - 1))) {
+                        arrayTemp[count] = leftArrayNoDublicate[i];
+                        count++;
+                    }
+                }
+            }
         }
 
-        for (int j = leftArray.length; j < arrayTemp.length; j++) {
-            arrayTemp[j] = rightArray[count];
-            count++;
+        for (int i = 0; i < rightArrayNoDublicate.length; i++) {
+            for (int j = 0; j < leftArrayNoDublicate.length; j++) {
+                if (rightArrayNoDublicate[i] == leftArrayNoDublicate[j]) {
+                    break;
+                } else {
+                    if ((rightArrayNoDublicate[i] != leftArrayNoDublicate[j]) && (j == (leftArrayNoDublicate.length - 1))) {
+                        arrayTemp[count] = rightArrayNoDublicate[i];
+                        count++;
+                    }
+                }
+            }
         }
 
-        int[] arrayResult = bubbleSort(arrayTemp);
+        int[] arrayResult = new int[count];
 
-        return dublicateKillWithOriginal(arrayResult);
+        return cuttingArray(arrayResult, arrayTemp);
     }
 }
